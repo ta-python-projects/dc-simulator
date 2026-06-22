@@ -4,9 +4,17 @@ import numpy as np
 import streamlit as st
 import io
 import pandas as pd
+import pathlib
+import matplotlib.font_manager as fm
 
-# ★ Cloud で確実に動く日本語フォント
-plt.rcParams["font.family"] = "Noto Sans CJK JP"
+#-----------------------------------------
+# ★ 日本語フォント設定（Cloudで100%動く）
+#-----------------------------------------
+BASE_DIR = pathlib.Path(__file__).parent
+font_path = BASE_DIR / "fonts" / "SourceHanSansJP-Regular.otf"
+
+fm.fontManager.addfont(str(font_path))
+plt.rcParams["font.family"] = "Source Han Sans JP"
 
 
 #-----------------------------------------
@@ -21,7 +29,6 @@ def simulate_dc(monthly, rate, years, initial=0, fee=0):
 
     monthly_rate = rate / 12
 
-    # 年0（初期状態）
     results.append({"year": 0, "balance": int(balance)})
 
     for year in range(1, years + 1):
@@ -42,7 +49,6 @@ st.sidebar.header("入力パラメータ")
 
 monthly = st.sidebar.number_input("毎月の積立額", value=20000, step=1000)
 
-# 利率を％表示
 rate_percent = st.sidebar.slider("利率（年利 %）", 0.0, 10.0, 3.0, 0.1)
 rate = rate_percent / 100
 
@@ -50,22 +56,18 @@ years = st.sidebar.number_input("積立年数", value=20, step=1)
 initial = st.sidebar.number_input("初期金額", value=0, step=10000)
 fee = st.sidebar.number_input("毎月の手数料", value=170, step=10)
 
-# テーマ切り替え
 theme = st.sidebar.selectbox("テーマ", ["ダーク", "ライト"])
 
-# タブ
 tab1, tab2 = st.tabs(["📈 通常シミュレーション", "📊 利率比較（3%・4%・5%）"])
 
 
 #-----------------------------------------
-# 計算（通常モード用）
+# 計算（通常モード）
 #-----------------------------------------
 results = simulate_dc(monthly, rate, years, initial, fee)
 
 years_list = [item["year"] for item in results]
 balances = [item["balance"] for item in results]
-
-# 初期金額を累計掛金に含める
 cumulative = [initial + monthly * 12 * year for year in years_list]
 
 years_np = np.array(years_list)
@@ -79,7 +81,7 @@ profit_rate = profit / final_cumulative * 100
 
 
 #-----------------------------------------
-# 📊 タブ2：利率比較モード
+# 📊 タブ2：利率比較
 #-----------------------------------------
 with tab2:
     st.subheader("利率比較モード（3%・4%・5%）")
