@@ -6,7 +6,7 @@ import io
 import pandas as pd
 import matplotlib.pyplot as plt
 
-plt.rcParams["font.family"] = "Noto Sans CJK JP"
+plt.rcParams["font.family"] = "TakaoGothic"
 
 
 #-----------------------------------------
