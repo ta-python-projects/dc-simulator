@@ -111,7 +111,6 @@ with tab2:
     else:
         plt.style.use("default")
 
-    plt.rcParams["font.family"] = "Meiryo"
 
     fig, ax = plt.subplots(figsize=(10, 5))
 
@@ -172,7 +171,6 @@ with tab1:
     else:
         plt.style.use("default")
 
-    plt.rcParams["font.family"] = "Meiryo"
 
     fig, ax = plt.subplots(figsize=(10, 5))
 
