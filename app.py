@@ -5,17 +5,8 @@ import streamlit as st
 import io
 import pandas as pd
 
-import pathlib
-import matplotlib.font_manager as fm
-
-BASE_DIR = pathlib.Path(__file__).parent
-font_path = BASE_DIR / "fonts" / "ipag.ttf"
-
-# ① フォントを登録
-fm.fontManager.addfont(str(font_path))
-
-# ② フォント名を直接指定（get_name() を使わない）
-plt.rcParams["font.family"] = "IPAGothic"
+# ★ Cloud で確実に動く日本語フォント
+plt.rcParams["font.family"] = "Noto Sans CJK JP"
 
 
 #-----------------------------------------
@@ -93,7 +84,6 @@ profit_rate = profit / final_cumulative * 100
 with tab2:
     st.subheader("利率比較モード（3%・4%・5%）")
 
-    # 利率ごとの結果計算（カード用）
     base_principal = initial + monthly * 12 * years
 
     r_list = [0.03, 0.04, 0.05]
@@ -107,7 +97,6 @@ with tab2:
         pr = pf / base_principal * 100
         results_list.append((fb, pf, pr))
 
-    # カード表示（万円＋利益率）
     col1, col2, col3 = st.columns(3)
     (fb1, pf1, pr1), (fb2, pf2, pr2), (fb3, pf3, pr3) = results_list
 
@@ -115,22 +104,18 @@ with tab2:
     col2.metric("4% 最終残高", f"{fb2 // 10000:,} 万円", f"{pr2:.1f}%")
     col3.metric("5% 最終残高", f"{fb3 // 10000:,} 万円", f"{pr3:.1f}%")
 
-    # テーマ適用（figより前）
     if theme == "ダーク":
         plt.style.use("dark_background")
     else:
         plt.style.use("default")
 
-
     fig, ax = plt.subplots(figsize=(10, 5))
 
-    # 累計掛金（初期金額含む）
     cumulative_compare = [initial + monthly * 12 * year for year in range(years + 1)]
     ax.plot(range(years + 1), cumulative_compare, color="#FFB74D", linewidth=2, label="累計掛金")
 
     colors = ["#4FC3F7", "#66BB6A", "#EF5350"]
 
-    # 各利率で計算して描画（グラフ用）
     for (r, label, color) in zip(r_list, labels, colors):
         res_r = simulate_dc(monthly, r, years, initial, fee)
         balances_r = [item["balance"] for item in res_r]
@@ -146,7 +131,6 @@ with tab2:
     ax.legend()
     fig.tight_layout()
 
-    # PNG ダウンロード
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=300, bbox_inches="tight")
     buf.seek(0)
@@ -167,7 +151,6 @@ with tab2:
 with tab1:
     st.subheader("通常シミュレーション")
 
-    # 結果カード表示（万円表示）
     col1, col2, col3, col4 = st.columns(4)
 
     col1.metric("最終運用残高", f"{final_balance // 10000:,} 万円")
@@ -175,22 +158,16 @@ with tab1:
     col3.metric("利益", f"{profit // 10000:,} 万円")
     col4.metric("利益率", f"{profit_rate:.1f} %")
 
-    # ★ テーマ適用（figより前に移動）
     if theme == "ダーク":
         plt.style.use("dark_background")
     else:
         plt.style.use("default")
 
-
     fig, ax = plt.subplots(figsize=(10, 5))
 
-    # 運用残高
     ax.plot(years_np, balances_np, marker="o", linewidth=2, color="#4FC3F7", label="運用残高")
-
-    # 累計掛金
     ax.plot(years_np, cumulative_np, linewidth=2, color="#FFB74D", label="累計掛金")
 
-    # 利益エリア
     ax.fill_between(
         years_np,
         balances_np,
@@ -201,7 +178,6 @@ with tab1:
         label="利益エリア"
     )
 
-    # アノテーション
     annotation_text = (
         f"最終運用残高: {final_balance:,} 円\n"
         f"積立総額: {final_cumulative:,} 円\n"
@@ -235,7 +211,6 @@ with tab1:
     ax.legend()
     fig.tight_layout()
 
-    # PNG ダウンロード
     buf = io.BytesIO()
     fig.savefig(buf, format="png", dpi=300, bbox_inches="tight")
     buf.seek(0)
