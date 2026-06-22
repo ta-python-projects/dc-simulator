@@ -4,9 +4,11 @@ import numpy as np
 import streamlit as st
 import io
 import pandas as pd
-import matplotlib.pyplot as plt
 
-plt.rcParams["font.family"] = "TakaoGothic"
+import matplotlib.font_manager as fm
+font_path = "fonts/ipag.ttf"
+font_prop = fm.FontProperties(fname=font_path)
+plt.rcParams["font.family"] = font_prop.get_name()
 
 
 #-----------------------------------------
