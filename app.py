@@ -5,10 +5,17 @@ import streamlit as st
 import io
 import pandas as pd
 
+import pathlib
 import matplotlib.font_manager as fm
-font_path = "fonts/ipag.ttf"
-font_prop = fm.FontProperties(fname=font_path)
-plt.rcParams["font.family"] = font_prop.get_name()
+
+BASE_DIR = pathlib.Path(__file__).parent
+font_path = BASE_DIR / "fonts" / "ipag.ttf"
+
+# ① フォントを登録
+fm.fontManager.addfont(str(font_path))
+
+# ② フォント名を直接指定（get_name() を使わない）
+plt.rcParams["font.family"] = "IPAGothic"
 
 
 #-----------------------------------------
