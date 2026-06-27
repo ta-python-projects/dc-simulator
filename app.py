@@ -67,29 +67,36 @@ with tab1:
     col3.metric("利益", f"{profit // 10000:,} 万円")
     col4.metric("利益率", f"{profit_rate:.1f} %")
 
-    fig = go.Figure()
+fig = go.Figure()
 
-    fig.add_trace(go.Scatter(
-        x=years_list, y=balances,
-        mode="lines+markers",
-        name="運用残高",
-        line=dict(color="#4FC3F7", width=3)
-    ))
+# ① 累計掛金（下側の線）
+fig.add_trace(go.Scatter(
+    x=years_list,
+    y=cumulative,
+    mode="lines",
+    name="累計掛金",
+    line=dict(color="#FFB74D", width=3)
+))
 
-    fig.add_trace(go.Scatter(
-        x=years_list, y=cumulative,
-        mode="lines",
-        name="累計掛金",
-        line=dict(color="#FFB74D", width=3)
-    ))
+# ② 運用残高（上側の線）＋ 塗りつぶし
+fig.add_trace(go.Scatter(
+    x=years_list,
+    y=balances,
+    mode="lines+markers",
+    name="運用残高",
+    line=dict(color="#4FC3F7", width=3) ,
+    fill='tonexty',              # ← これが塗りつぶし
+    fillcolor='rgba(30,136,229,0.3)'  # ← 色（青系・透明度30%）
+))
 
-    fig.update_layout(
-        title="DCシミュレーション結果",
-        xaxis_title="年",
-        yaxis_title="残高（円）",
-        hovermode="x unified",
-        template="plotly_white"
-    )
+fig.update_layout(
+    title="DCシミュレーション結果",
+    xaxis_title="年",
+    yaxis_title="残高（円）",
+    hovermode="x unified",
+    template="plotly_white"
+)
+
 
     st.plotly_chart(fig, use_container_width=True)
 
